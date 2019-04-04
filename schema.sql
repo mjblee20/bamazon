@@ -8,7 +8,7 @@ CREATE TABLE bamazonCust(
     product_name VARCHAR(100) NOT NULL,
     department_name VARCHAR(45) NOT NULL,
     price INT default 20,
-    stock_quantity INT default 0,
+    stock_quantity INT default 10,
     PRIMARY KEY (item_id)
 );
 
@@ -34,7 +34,7 @@ INSERT INTO bamazonCust(product_name, department_name, price, stock_quantity)
 VALUES("Super Cool Pants", "Clothing", 180, 43);
 
 INSERT INTO bamazonCust(product_name, department_name, price, stock_quantity)
-VALUES("Hermes 32cm Lime Matte Alligator Kelly Bag", "Women Fashion", 72600, 1);
+VALUES("Hermes Bag", "Women Fashion", 72600, 1);
 
 INSERT INTO bamazonCust(product_name, department_name, price, stock_quantity)
 VALUES("PS4 Pro", "Electronics", 350, 200);

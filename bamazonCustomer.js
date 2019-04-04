@@ -26,11 +26,26 @@ connection.connect(function(err) {
         console.error('error connecting: ' + err.stack);
         return;
     }
+    // connection success
     console.log("You have connected to the bamazon store!");
-    // start inquiry
-    idCheck();
+    displayItems();
 });
 
+// display all items and descriptions using mysql
+function displayItems() {
+    // console.log("===== displayItems ===== ");
+    connection.query("SELECT * from bamazonCust;", function(err, res) {
+        if (err) throw err;
+        // creating table
+        console.log("===================================================================================================================");
+        for (let i = 0; i < res.length; i++) {
+            console.log(`Item ID: ${res[i].item_id} || Product Name: ${res[i].product_name} || Department Name: ${res[i].department_name}|| Price: ${res[i].price} ||  Stock Quantity: ${res[i].stock_quantity}`);
+        }
+        console.log("===================================================================================================================");
+        idCheck();
+    })
+}
+1
 // check product id
 function idCheck() {
     // prompt for id of the product customer wishes to buy
@@ -38,59 +53,89 @@ function idCheck() {
         .prompt({ 
             name: "id",
             type: "input",
-            message: "Please enter the product ID you wish to purchase"
+            message: "Please enter the product ID you wish to purchase?",
+            validate: function(name) {
+                return !isNaN(name);
+            }
         })
         .then(function(answer) {
-            console.log(answer, typeof answer);
-            let id = answer.id;
 
-            // grab all id num range
-            connection.query("SELECT ID FROM bamazon;", function (error, results, fields) {
+            let itemid = parseInt(answer.id);
             
-            });
             // if chosen product is valid then continue to check amount wish to purchase
-            if () {
+            connection.query("SELECT * from bamazonCust;", function(err, res) {
+                if (err) throw err;
+                let exist = false;
+                let item;
 
-            }
-
-            // else console.log the product selected does not exist please choose a valid product ID
-
+                for (let i = 0; i < res.length; i++) {
+                    if (itemid === res[i].item_id) {
+                        exist = true;
+                        item = res[i];
+                    }
+                }
+                if (exist) {
+                    checkAmount(item);
+                } else {
+                    console.log("The ID selected does not exist. Please select a valid ID.");
+                    idCheck();
+                }
+            })
         });
-
-    // MySQL queries
-    connection.query("SELECT * FROM bamazon;", function (error, results, fields) {
-            
-    });
-
-    checkAmount();
 }
 // prompt for how many they'd like to purchase
 function checkAmount(obj) {
-    let purchaseCount;
     inquirer   
-        .prompt(    
-        
-        )
+        .prompt({  
+            name: "count",
+            type: "input",
+            message: "How many would you like to purchase?",
+            validate: function(name) {
+                return !isNaN(name);
+            }
+        })
         .then(function(answer){
-
+            let purchaseCount = parseInt(answer.count);
+            if ((purchaseCount) <= obj.stock_quantity) {
+                    confirmPurchase(purchaseCount, obj);
+                }
+                // if not console.log Insufficient Quantity!
+                else {
+                    console.log("Sorry, we currently do not have that many. Please try a more reasonable amount.");
+                    checkAmount(obj);
+                }
         });
-
-    
-    // check if stock has enough to be purchased
-    if () {
-        confirmPurchase(purchaseCount);
-    }
-    // if not console.log Insufficient Quantity!
-    else {
-        //
-    }
 }
 
-function confirmPurchase(count) {
+function confirmPurchase(count, obj) {
+    obj.stock_quantity -= count;
     // update sql database's quantity after purchase
-    // MySQL queries
-    connection.query("SELECT * FROM bamazon;", function (error, results, fields) {
-            
+    connection.query("UPDATE bamazonCust SET ? WHERE item_id = ?", [obj, obj.item_id] ,function (err) {
+        if (err) throw err;
     });
     // do math to figure out the total cost of the purchase
+    console.log("   ==============================");
+    console.log("   Your total cost will be $", obj.price * count);
+    console.log("   ==============================");
+    buyAgain();
+}
+
+// end step
+function buyAgain() {
+    // prompts if user wishes to purchase another item
+    inquirer
+        .prompt({
+            name: "confirm",
+            type: "confirm",
+            message: "Would you like to continue shopping?"
+        })
+        .then(function(answer){
+            if (answer.confirm) {
+                displayItems();
+            }
+            else {
+                console.log("Bye! See you next time!");
+                connection.end();
+            }
+        })
 }
