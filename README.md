@@ -4,11 +4,14 @@
 ## Function 
 
 1. Type in `node bamazonCustomer.js` in CLI
-2. A table with all of bamazon's inventory will be displayed
+    - A table with all of bamazon's inventory will be displayed
 3. User will be prompted to choose the product ID he/she wishes to buy
-    - input must be a number
+    - Input must be a number
+    ![image of table]images/tcost.png
 4. User will then be prompted to decide how many of the product he/she wishes to buy
-    - input msut be a number
+    - Input must be a number
+    - Upon entering the amount, total cost of the purchase will be available
+![image of receipt]image/tcost.png
 
 ## Focus
 
@@ -17,6 +20,4 @@
 * Utilize inquirer node package to allow interaction between CLI and user
 
 ## 
-
-
 
