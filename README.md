@@ -4,6 +4,10 @@
 ----
 
 1. type in 
-
-node.js
 ----
+node bamazonCustomer.js
+----
+
+
+
+
